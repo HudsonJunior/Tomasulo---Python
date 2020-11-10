@@ -1,4 +1,4 @@
-class ReservationStation:
+class ReservationStationClass:
     def __init__(self, busy, op, Vj, Vk, Qj, Qk, A):
         self.busy = busy
         self.op = op

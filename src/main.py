@@ -4,7 +4,7 @@ import Pipeline
 listRegisters, memoriaDados, memoriaInstrucoes, ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore = Helpers.getStructures()
 clock = 0
 PC = 0
-IR = ""
+IR = "" 
 
 
 def main():
@@ -15,9 +15,13 @@ def main():
 
     listInstrucoes = instructionFile.readlines()
 
+    # escrita
+
+    # execucao
+
+    #Despacho da instrucao
+    Pipeline.Despacho(IR, rsAddSub, rsMulDiv, rsLoadStore, listRegisters)
     #Busca da instrucao
     IR, PC = Pipeline.BuscaInstrucoes(IR, listInstrucoes, PC)
-
-    #Decodificacao da instrucao
     
 

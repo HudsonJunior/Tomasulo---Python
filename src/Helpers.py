@@ -7,7 +7,7 @@ def getRegisterList():
     registerList = []
 
     for i in range(15):
-        register = RegisterClass(0, 0 , "")
+        register = RegisterClass(-1, -1 , "")
         registerList.append(register)
     
     return registerList
@@ -25,7 +25,7 @@ def getRSList():
     rsList = []
 
     for i in range(8):
-        rs = ReservationStationClass("", "", 0, 0, 0, 0, "")
+        rs = ReservationStationClass(False, "", 0, 0, 0, 0, "")
         rsList.append(rs)
     
     return rsList

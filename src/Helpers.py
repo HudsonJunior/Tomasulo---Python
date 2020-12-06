@@ -25,7 +25,7 @@ def getRSList():
     rsList = []
 
     for i in range(8):
-        rs = ReservationStationClass(False, "", 0, 0, 0, 0, "")
+        rs = ReservationStationClass(False, False, "", 0, 0, "", "", "")
         rsList.append(rs)
     
     return rsList

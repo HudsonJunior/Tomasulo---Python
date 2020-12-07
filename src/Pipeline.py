@@ -46,11 +46,14 @@ def Despacho(IR, rsAddSub, rsMulDiv, rsLoadStore, listRegisters, flagOcorreuDesp
 
 
 def Execucao(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore):
-    print('a')
+    executar(ufAddSub, rsAddSub)
+    executar(ufMulDiv, rsMulDiv)
+    executar(ufLoadStore, rsLoadStore)
 
 
 
-def abc(rsName, rs, ufAddSub, ufMulDiv, ufLoadStore):
+#se tiver espaço, colocar a instrução na uf
+def AdicionarEmUF(rsName, rs, ufAddSub, ufMulDiv, ufLoadStore):
     for x in rs:
         if(x.pronto):
             if(rsName == 'ADD'):
@@ -60,16 +63,36 @@ def abc(rsName, rs, ufAddSub, ufMulDiv, ufLoadStore):
                     ufAddSub[posicao].operation = x.op
                     ufAddSub[posicao].nCiclo = 5
                     ufAddSub[posicao].idRS = x.index()
-                else:
-
 
             elif(rsName == 'MUL'):
                 temEspaco, posicao = checkUF(ufMulDiv)
+                if(temEspaco):
+                    ufMulDiv[posicao].operation = x.op
+                    ufMulDiv[posicao].nCiclo = 5
+                    ufMulDiv[posicao].idRS = x.index()
             
             elif(rsName == 'LOAD'):
                 temEspaco, posicao = checkUF(ufLoadStore)
+                if(temEspaco):
+                    ufLoadStore[posicao].operation = x.op
+                    ufLoadStore[posicao].nCiclo = 5
+                    ufLoadStore[posicao].idRS = x.index()
         else:
             print('a')
+            
+
+# def escrita(uf):
+#     for x in uf:
+
+
+def DecrementaCiclosUF (uf):
+
+    for x in uf:
+        if(x.nCiclos > 0):
+            x.nCiclos -= 1
+
+            if(x.nCiclos == 0):
+                x.execCompleta = True
 
 
 def checkUF(uf):
@@ -82,3 +105,62 @@ def checkUF(uf):
         count += 1
     
     return False, -1
+
+
+def executar(uf, rs, PC):
+    
+    for x in uf:
+        if(x.execCompleta):
+            station = rs[x.idRS]
+            
+            if (x.operation == "add"):
+                resultado = int(station.vj) + int(station.vk)
+                
+            elif (x.operation == "addi"):
+                resultado = int(station.vj) + int(station.vk)
+                
+            elif (x.operation == "sub"):
+                resultado = int(station.vj) - int(station.vk)
+
+            elif (x.operation == "subi"):
+                resultado = int(station.vj) - int(station.vk)
+
+            elif (x.operation == "mul"):
+                resultado = int(station.vj) * int(station.vk)
+                
+            elif (x.operation == "div"):
+                resultado = int(station.vj) / int(station.vk)
+
+            elif (x.operation == "and"):
+                resultado = int(station.vj) & int(station.vk)
+
+            elif (x.operation == "or"):
+                resultado = int(station.vj) | int(station.vk)
+
+            elif (x.operation == "not"):
+                resultado = ~station.vj
+                
+            elif (x.operation == "blt"):
+                if(station.vj > station.vk):
+                    
+            elif (x.operation == "bgt"):
+                if(station.vj < station.vk):
+
+            elif (x.operation == "beq"):
+
+            elif (x.operation == "bne"):
+
+            elif (x.operation == "j"):
+                
+            elif (x.operation == "lw"):
+                resultado = Memoria[station.A]
+
+            elif (x.operation == "sw"):
+                resultado = station.vj
+
+
+## como funcionam os valores das operações booleanas
+## utilização do PC na main...
+## a instrução sai da unidade funcional somente quando é escrita?
+## os operandoas das funções de desvio estão bugados, como passar eles nas RS?
+## como fazer as operações lógicas

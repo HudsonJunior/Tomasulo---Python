@@ -16,7 +16,7 @@ def getUFList():
     ufList = []
 
     for i in range(2):
-        uf = FunctionalUnitClass("", 0, "", False)
+        uf = FunctionalUnitClass("", 0, "", False, -1)
         ufList.append(uf)
     
     return ufList

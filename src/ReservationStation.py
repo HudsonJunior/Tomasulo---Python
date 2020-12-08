@@ -30,22 +30,44 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
         operando1 = int(instruction[2].replace('r', ''))
         operando2 = int(instruction[3].replace('r', ''))
         destino = int(instruction[1].replace('r', ''))
-
-        reg = listRegisters[operando1]
-
-        #validar o registrador do operando 1 (se esta sendo usado)
-        if(reg.Qi == -1):
-            station.Vj = reg.value
-        else:
-            station.Qj = '{}-{}'.format(reg.Qi, rsName)
         
-        #atualizar o registrador de destino para a instrucao atual
-        listRegisters[destino].Qi = posicao
-        listRegisters[destino].rs_name = rsName
+        
+        # se for uma instrução de desvio, o valor destino vai valer pro vj, operando1 pro vk e operando2 pro A
+        if(opcode == 'blt' or opcode == 'bgt' or opcode == 'beq' or opcode == 'bne'):
+            reg = listRegisters[destino]
+
+            if(reg.Qi == -1):
+                station.Vj = reg.value
+            else:
+                station.Qj = '{}-{}'.format(reg.Qi, rsName)
+            
+            reg = listRegisters[operando1]
+            
+            if(reg.Qi == -1):
+                station.Vk = reg.value
+            else:
+                station.Qk = '{}-{}'.format(reg.Qi, rsName)
+
+            station.A = operando2
+
+        # se não for, atribui os valores normal e atualizar o registrador de destino para a instrucao atual
+        else:
+            reg = listRegisters[operando1]
+
+            #validar o registrador do operando 1 (se esta sendo usado)
+
+            if(reg.Qi == -1):
+                station.Vj = reg.value
+            else:
+                station.Qj = '{}-{}'.format(reg.Qi, rsName)
+
+            listRegisters[destino].Qi = posicao
+            listRegisters[destino].rs_name = rsName
 
         #validar se operando 2 é imediato ou registrador 
-        if(opcode == 'subi' or opcode =='addi' or opcode == 'blt' or opcode == 'bgt' or opcode == 'beq' or opcode == 'bne'):
+        if(opcode == 'subi' or opcode =='addi'):
             station.Vk = operando2
+
         else:
             #se não for imediato fazer a validação se ele está ocupado
             reg = listRegisters[operando2]

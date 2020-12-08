@@ -6,7 +6,6 @@ clock = 0
 PC = 0
 IR = ""
 flagOcorreuDespacho = True
-listaDeInstrucoes = []
 
 def main():
     global IR, PC, listRegisters, memoriaDados, memoriaInstrucoes, ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, flagOcorreuDespacho, clock
@@ -23,12 +22,12 @@ def main():
 
         #Despacho da instrucao
         if (flagOcorreuDespacho):
-            instruction = listaDeInstrucoes[PC]
+            instruction = memoriaInstrucoes[PC]
         
         rsMulDiv, rsAddSub, rsLoadStore, listRegisters, flagOcorreuDespacho = Pipeline.Despacho(instruction, rsAddSub, rsMulDiv, rsLoadStore, listRegisters, flagOcorreuDespacho)
         
         #Busca da instrucao
         IR, PC = Pipeline.BuscaInstrucoes(IR, listInstrucoes, PC)
-        listaDeInstrucoes.append(IR)
+        memoriaInstrucoes.append(IR)
     
 

@@ -107,7 +107,7 @@ def checkUF(uf):
     return False, -1
 
 
-def executar(uf, rs, PC):
+def executar(uf, rs, PC, BufferMemoria):
     
     for x in uf:
         if(x.execCompleta):
@@ -138,29 +138,52 @@ def executar(uf, rs, PC):
                 resultado = int(station.vj) | int(station.vk)
 
             elif (x.operation == "not"):
-                resultado = ~station.vj
+                resultado = ~int(station.vj)
                 
             elif (x.operation == "blt"):
-                if(station.vj > station.vk):
-                    
+                if(station.Vj > station.Vk):
+                    resultado = station.A
+                else:
+                    resultado = -1
+
             elif (x.operation == "bgt"):
-                if(station.vj < station.vk):
+                if(station.Vj < station.Vk):
+                    resultado = station.A
+                else:
+                    resultado = -1
 
             elif (x.operation == "beq"):
 
+                if(station.Vj == station.Vk):
+                    resultado = station.A
+                else: 
+                    resultado = -1
+
             elif (x.operation == "bne"):
 
+                if(station.Vj != station.Vk):
+                    resultado = station.A
+                else: 
+                    resultado = -1
+
             elif (x.operation == "j"):
-                
+
+                resultado = station.vj       
+
             elif (x.operation == "lw"):
-                resultado = Memoria[station.A]
+                resultado = BufferMemoria[station.A]
 
             elif (x.operation == "sw"):
-                resultado = station.vj
+                BufferMemoria[station.A] = station.vk
+
+            x.resultado = resultado
 
 
 ## como funcionam os valores das operações booleanas
-## utilização do PC na main...
-## a instrução sai da unidade funcional somente quando é escrita?
-## os operandoas das funções de desvio estão bugados, como passar eles nas RS?
+## utilização do PC na main... // tem um buffer de instrucoes pra colocar as ins ai vc trabalha com o pc nisso (pc referene a ordem do despacho?)
+## a instrução sai da unidade funcional somente quando é escrita? //sim
+## os operandoas das funções de desvio estão bugados, como passar eles nas RS? // passar o valor do imediato no A
 ## como fazer as operações lógicas
+
+
+## como atualizar o valor de R5 + 10 que estará no A na RS?

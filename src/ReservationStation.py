@@ -118,6 +118,7 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
                 #validar o reg_imm 
                 if (reg_imm.Qi == -1):
                     station.Vj = reg_imm.value
+                    station.A = int(station.Vj) + int(imm)
                 else:
                     station.Qj = '{}-{}'.format(reg_imm.Qi, rsName)
 
@@ -130,6 +131,7 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
                 #validar o reg_imm (destino)
                 if (reg_imm.Qi == -1):
                     station.Vj = reg_imm.value
+                    station.A = int(station.Vj) + int(imm)
                 else:
                     station.Qj = '{}-{}'.format(reg_imm.Qi, rsName)
 

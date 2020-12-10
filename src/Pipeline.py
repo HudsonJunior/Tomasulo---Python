@@ -1,5 +1,7 @@
 from ReservationStation import checkRS
 from ReservationStation import fillStation
+from ReservationStation import ReservationStationClass
+from FunctionalUnit import FunctionalUnitClass
 
 
 def BuscaInstrucoes(IR, listInstrucoes, PC):
@@ -178,6 +180,77 @@ def executar(uf, rs, PC, BufferMemoria):
 
             x.resultado = resultado
 
+def escrita(ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister):
+    ## só pode uma escrita por vez, vamos priorizar a uf de soma por poder conter desvios
+    
+    escreveu, rsAddSub, ufAddSub, listRegister = Escrita(ufAddSub, rsAddSub, listRegister, 'ADD')
+    if(escreveu):
+        
+        return (ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister)
+
+    escreveu, rsMulDiv, ufMulDiv, listRegister = Escrita(ufMulDiv, rsMulDiv, listRegister, 'MUL')
+    
+    if(escreveu):
+        return (ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister)
+
+    escreveu, rsLoadStore, ufLoadStore, listRegister = Escrita(ufLoadDiv, rsLoadStore, listRegister, 'LOAD')
+    
+    return (ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister)
+
+def Escrita(uf, rs, listRegister, rsName, PC):
+    teveEscrita = False
+    ocorreuDesvio = False
+    
+    for x in uf:
+        if(x.nCiclos == 0):
+            if(x.operation == 'blt' or x.operation == 'bgt' or x.operation == 'beq' or x.operation == 'bne' or x.operation == 'j'):
+                if(x.resultado != -1):
+                    PC = x.resultado
+                    ocorreuDesvio = True
+
+                else:
+                    rs = limpaEstacao(rs, x.idRs)
+                
+            elif(x.operation == 'lw' or x.operation == 'sw'):
+            
+            else:
+                if(x.idRs == listRegister[uf.idDestino]).Qi:
+                    #escrita do resultado
+                    listRegister[uf.idDestino].value = x.result
+
+                    #tira a referencia do resultado na lista de registradores
+                    listRegister[uf.idDestino].Qi = -1
+                    teveEscrita = True
+                
+                #limpeza das estruturas
+                index = uf.index(x)
+                rs = limpaEstacao(rs, x.idRs)
+                uf[index] = FunctionalUnitClass("", 0, -1, -1, False, -1)    
+
+                #retirar as dependencias de dados
+                for r in rs:
+                    rIndex = r.index()
+                    idQj, rsQj = r.Qj.split('-')
+
+                    if(idQj == x.idRs and rsQj == rsName):
+                        r.Vj = x.resultado
+                        r.Qj = ''
+
+                    idQk, rsQk = r.Qk.split('-')
+
+                    if(idQk == x.idRs and rsQk == rsName):
+                        r.Vk = x.resultado
+                        r.Qk = ''
+                    
+                    rs[rIndex] = r
+
+    return teveEscrita, rs, uf, listRegister, ocorreuDesvio
+
+ 
+def limpaEstacao(rs, index):
+    rs[index] = ReservationStationClass(False, False, "", 0, 0, "", "", "") 
+    return rs
+
 
 ## como funcionam os valores das operações booleanas
 ## utilização do PC na main... // tem um buffer de instrucoes pra colocar as ins ai vc trabalha com o pc nisso (pc referene a ordem do despacho?)
@@ -187,3 +260,7 @@ def executar(uf, rs, PC, BufferMemoria):
 
 
 ## como atualizar o valor de R5 + 10 que estará no A na RS?
+
+
+## validar instrução que entrou antes do desvio mas o desvio foi escrito antes, essa instrução vai ser apagada?
+## finalizar lógica de escrita para as diferentes tipo de instrução

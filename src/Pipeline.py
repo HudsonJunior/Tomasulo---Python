@@ -48,8 +48,8 @@ def Despacho(IR, rsAddSub, rsMulDiv, rsLoadStore, listRegisters, flagOcorreuDesp
 
 
 def Execucao(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore):
-    executar(ufAddSub, rsAddSub)
-    executar(ufMulDiv, rsMulDiv)
+    executar(ufAddSub, rsAddSub, PC, )
+    executar(ufMulDiv, rsMulDiv, )
     executar(ufLoadStore, rsLoadStore)
 
 
@@ -170,9 +170,9 @@ def executar(uf, rs, PC, BufferMemoria):
 
             elif (x.operation == "j"):
 
-                resultado = station.vj       
+                resultado = station.vj
 
-            elif (x.operation == "lw"):
+            elif (x.operation == "lw"): #SAPORRA NÃO FAZ SENTIDO. A gente tem que usar a memória em si ou o buffer de load store? 
                 resultado = BufferMemoria[station.A]
 
             elif (x.operation == "sw"):
@@ -180,24 +180,23 @@ def executar(uf, rs, PC, BufferMemoria):
 
             x.resultado = resultado
 
-def escrita(ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister):
+def escrita(ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, PC, memoriaDados):
     ## só pode uma escrita por vez, vamos priorizar a uf de soma por poder conter desvios
     
-    escreveu, rsAddSub, ufAddSub, listRegister = Escrita(ufAddSub, rsAddSub, listRegister, 'ADD')
+    escreveu, rsAddSub, ufAddSub, listRegister, PC, memoriaDados = Escrita(ufAddSub, rsAddSub, listRegister, 'ADD', PC, memoriaDados)
     if(escreveu):
-        
-        return (ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister)
+        return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados)
 
-    escreveu, rsMulDiv, ufMulDiv, listRegister = Escrita(ufMulDiv, rsMulDiv, listRegister, 'MUL')
+    escreveu, rsMulDiv, ufMulDiv, listRegister, PC, memoriaDados = Escrita(ufMulDiv, rsMulDiv, listRegister, 'MUL', PC, memoriaDados)
     
     if(escreveu):
-        return (ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister)
+        return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados)
 
-    escreveu, rsLoadStore, ufLoadStore, listRegister = Escrita(ufLoadDiv, rsLoadStore, listRegister, 'LOAD')
+    escreveu, rsLoadStore, ufLoadStore, listRegister, PC, memoriaDados = Escrita(ufLoadStore, rsLoadStore, listRegister, 'LOAD', PC, memoriaDados)
     
-    return (ufAddSub, ufMulDiv, ufLoadDiv, rsAddSub, rsMulDiv, rsLoadStore, listRegister)
+    return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados)
 
-def Escrita(uf, rs, listRegister, rsName, PC):
+def Escrita(uf, rs, listRegister, rsName, PC, memoriaDados):
     teveEscrita = False
     ocorreuDesvio = False
     
@@ -211,8 +210,10 @@ def Escrita(uf, rs, listRegister, rsName, PC):
                 else:
                     rs = limpaEstacao(rs, x.idRs)
                 
-            elif(x.operation == 'lw' or x.operation == 'sw'):
-            
+            elif(x.operation == 'lw'):
+                print('a')
+            elif (x.operation == 'sw'):
+                print('aaa')
             else:
                 if(x.idRs == listRegister[uf.idDestino]).Qi:
                     #escrita do resultado
@@ -264,3 +265,7 @@ def limpaEstacao(rs, index):
 
 ## validar instrução que entrou antes do desvio mas o desvio foi escrito antes, essa instrução vai ser apagada?
 ## finalizar lógica de escrita para as diferentes tipo de instrução
+
+
+## rever a parte de sw e lw para a execucao e buffer de load e store
+## colocar os endereços efetivos onde?

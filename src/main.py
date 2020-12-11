@@ -17,9 +17,12 @@ def main():
 
     while(PC < len(listInstrucoes)):
         # escrita
-
+        
+        ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegisters, PC, memoriaDados = Pipeline.escrita(ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegisters, PC, memoriaDados)
+        
         # execucao
-
+        Pipeline.Execucao(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore)        
+        
         #Despacho da instrucao
         if (flagOcorreuDespacho):
             instruction = memoriaInstrucoes[PC]

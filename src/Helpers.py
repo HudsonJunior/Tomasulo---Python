@@ -1,7 +1,7 @@
 from Register import RegisterClass
 from FunctionalUnit import FunctionalUnitClass
 from ReservationStation import ReservationStationClass
-
+from LoadStoreBuffer import LoadStoreBufferClass
 
 def getRegisterList():
     registerList = []
@@ -11,6 +11,12 @@ def getRegisterList():
         registerList.append(register)
     
     return registerList
+
+def getLoadStoreBuffer():
+    loadStoreBuffer = []
+
+    for i in range(15):operacao, pMemoria, valor
+        loadStore = LoadStoreBufferClass('', )
 
 def getUFList():
     ufList = []

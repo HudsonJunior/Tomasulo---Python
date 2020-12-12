@@ -15,8 +15,10 @@ def getRegisterList():
 def getLoadStoreBuffer():
     loadStoreBuffer = []
 
-    for i in range(15):operacao, pMemoria, valor
-        loadStore = LoadStoreBufferClass('', )
+    for i in range(15):
+        loadStoreBuffer = LoadStoreBufferClass('', '', -1)
+    
+    return loadStoreBuffer
 
 def getUFList():
     ufList = []
@@ -55,4 +57,17 @@ def getStructures():
 
     rsLoadStore = getRSList()
 
-    return listRegisters, memoriaDados, memoriaInstrucoes, ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore
+    BufferLoadStore = getLoadStoreBuffer()
+
+    return listRegisters, memoriaDados, memoriaInstrucoes, ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, BufferLoadStore
+
+def limpaEstruturas(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore):
+    ufAddSub = getUFList()
+    ufMulDiv = getUFList()
+    ufLoadStore = getUFList()
+
+    rsAddSub = getRSList()
+    rsMulDiv = getRSList()
+    rsLoadStore = getRSList()
+
+    return rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore

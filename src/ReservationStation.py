@@ -9,6 +9,13 @@ class ReservationStationClass:
         self.Qk = Qk
         self.A = A
 
+    def isEmpty(self):
+        if(self.pronto and not self.busy and self.op == '' and self.Vj == 0 and self.Vk == 0 and self.Qj == '' and self.Qk == '' and self.A == ''):
+            return True
+
+        return False
+
+
 def checkRS(rs):
     count = 0
 
@@ -24,6 +31,7 @@ def checkRS(rs):
 def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
     station.busy = True
     station.op = opcode    
+    instrucaoDesvio = False
     ## [add, r0, r5, r10]
 
     if len(instruction) == 4:
@@ -37,18 +45,21 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
             reg = listRegisters[destino]
 
             if(reg.Qi == -1):
-                station.Vj = reg.value
+                station.Vj = int(reg.value)
             else:
                 station.Qj = '{}-{}'.format(reg.Qi, rsName)
             
             reg = listRegisters[operando1]
             
             if(reg.Qi == -1):
-                station.Vk = reg.value
+                station.Vk = int(reg.value)
             else:
                 station.Qk = '{}-{}'.format(reg.Qi, rsName)
 
             station.A = operando2
+
+            instrucaoDesvio = True
+
 
         # se não for, atribui os valores normal e atualizar o registrador de destino para a instrucao atual
         else:
@@ -57,7 +68,7 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
             #validar o registrador do operando 1 (se esta sendo usado)
 
             if(reg.Qi == -1):
-                station.Vj = reg.value
+                station.Vj = int(reg.value)
             else:
                 station.Qj = '{}-{}'.format(reg.Qi, rsName)
 
@@ -66,14 +77,14 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
 
         #validar se operando 2 é imediato ou registrador 
         if(opcode == 'subi' or opcode =='addi'):
-            station.Vk = operando2
+            station.Vk = int(operando2)
 
         else:
             #se não for imediato fazer a validação se ele está ocupado
             reg = listRegisters[operando2]
 
             if(reg.Qi == -1):
-                station.Vk = reg.value
+                station.Vk = int(reg.value)
             else:
                 station.Qk = '{}-{}'.format(reg.Qi, rsName)
 
@@ -141,13 +152,17 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
                 else:
                     station.Qk = '{}-{}'.format(reg_rs.Qi, rsName)
 
-## validar com o prof sobre a lógica do load e store
-
     #salto incondicional
     elif (len(instruction) == 2) :
         station.Vj = int(instruction[1])
 
+        instrucaoDesvio = True
+
     if(station.Qj == '' and station.Qk == ''):
         station.pronto = True
 
-    return station, listRegisters
+    return station, listRegisters, instrucaoDesvio
+
+def limpaEstacao(rs, index):
+    rs[index] = ReservationStationClass(False, False, "", 0, 0, "", "", "") 
+    return rs

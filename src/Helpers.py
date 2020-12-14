@@ -2,12 +2,12 @@ from Register import RegisterClass
 from FunctionalUnit import FunctionalUnitClass
 from ReservationStation import ReservationStationClass
 from LoadStoreBuffer import LoadStoreBufferClass
-
+from random import randint
 def getRegisterList():
     registerList = []
 
     for i in range(15):
-        register = RegisterClass(-1, -1 , "")
+        register = RegisterClass(0, -1 , "")
         registerList.append(register)
     
     return registerList
@@ -24,16 +24,16 @@ def getUFList():
     ufList = []
 
     for i in range(2):
-        uf = FunctionalUnitClass("", 0, -1, -1, False, -1)
+        uf = FunctionalUnitClass("", -1, -1, -1, False, -1)
         ufList.append(uf)
     
     return ufList
 
-def getRSList():
+def getRSList(rsName):
     rsList = []
 
     for i in range(8):
-        rs = ReservationStationClass(False, False, "", 0, 0, "", "", "")
+        rs = ReservationStationClass(rsName + str(i), False, False, "", 0, 0, "", "", "", -1, False)
         rsList.append(rs)
     
     return rsList
@@ -41,7 +41,7 @@ def getRSList():
 def getStructures():
     listRegisters = getRegisterList()
 
-    memoriaDados = [0 for i in range(256)]
+    memoriaDados = [randint(0, 256) for i in range(256)]
 
     memoriaInstrucoes = []
 
@@ -51,11 +51,11 @@ def getStructures():
 
     ufLoadStore = getUFList()
     
-    rsAddSub = getRSList()
+    rsAddSub = getRSList('ADD')
 
-    rsMulDiv = getRSList()
+    rsMulDiv = getRSList('MUL')
 
-    rsLoadStore = getRSList()
+    rsLoadStore = getRSList('LOAD')
 
     BufferLoadStore = getLoadStoreBuffer()
 
@@ -66,8 +66,8 @@ def limpaEstruturas(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadS
     ufMulDiv = getUFList()
     ufLoadStore = getUFList()
 
-    rsAddSub = getRSList()
-    rsMulDiv = getRSList()
-    rsLoadStore = getRSList()
+    rsAddSub = getRSList('ADD')
+    rsMulDiv = getRSList('MUL')
+    rsLoadStore = getRSList('LOAD')
 
     return rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore

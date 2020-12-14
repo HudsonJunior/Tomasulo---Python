@@ -15,7 +15,7 @@ def Despacho(IR, rsAddSub, rsMulDiv, rsLoadStore, listRegisters, flagOcorreuDesp
     instrucao  = IR.split(' ')
     opcode = instrucao[0]
     instrucaoDesvio = False
-
+    idDestino = -1
     if(flagOcorreuDespacho):
         if(opcode == 'mul' or opcode == 'div'):
             temEspaco, posicao = checkRS(rsMulDiv)
@@ -67,47 +67,47 @@ def Execucao(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore, P
 
     return ufAddSub, ufMulDiv, ufLoadStore, loadStoreQueue
     
-def executarOperacao(uf, rs, MemoriaDados):
-    
+def executarOperacao(uf, rs, memoriaDados):
+    resultado = -1
     for x in uf:
-        if(x.execCompleta):
+        if(x.execPronta):
             station = rs[x.idRS]
             
             if (x.operation == "add"):
-                resultado = int(station.vj) + int(station.vk)
+                resultado = int(station.Vj) + int(station.Vk)
                 
             elif (x.operation == "addi"):
-                resultado = int(station.vj) + int(station.vk)
+                resultado = int(station.Vj) + int(station.Vk)
                 
             elif (x.operation == "sub"):
-                resultado = int(station.vj) - int(station.vk)
+                resultado = int(station.Vj) - int(station.Vk)
 
             elif (x.operation == "subi"):
-                resultado = int(station.vj) - int(station.vk)
+                resultado = int(station.Vj) - int(station.Vk)
 
             elif (x.operation == "mul"):
-                resultado = int(station.vj) * int(station.vk)
+                resultado = int(station.Vj) * int(station.Vk)
                 
             elif (x.operation == "div"):
-                resultado = int(station.vj) / int(station.vk)
+                resultado = int(int(station.Vj) / int(station.Vk))
 
             elif (x.operation == "and"):
-                resultado = int(station.vj) & int(station.vk)
+                resultado = int(station.Vj) & int(station.Vk)
 
             elif (x.operation == "or"):
-                resultado = int(station.vj) | int(station.vk)
+                resultado = int(station.Vj) | int(station.Vk)
 
             elif (x.operation == "not"):
-                resultado = ~int(station.vj)
+                resultado = ~int(station.Vj)
                 
             elif (x.operation == "blt"):
-                if(station.Vj > station.Vk):
+                if(station.Vj < station.Vk):
                     resultado = station.A
                 else:
                     resultado = -1
 
             elif (x.operation == "bgt"):
-                if(station.Vj < station.Vk):
+                if(station.Vj > station.Vk):
                     resultado = station.A
                 else:
                     resultado = -1
@@ -128,13 +128,17 @@ def executarOperacao(uf, rs, MemoriaDados):
 
             elif (x.operation == "j"):
 
-                resultado = station.vj
+                resultado = station.Vj
 
             elif (x.operation == "lw"):
-                resultado = MemoriaDados[station.A].valor
+                imediato = int(station.A.split('+')[0])
+                A = imediato + station.Vj
+                resultado = memoriaDados[A]
 
             elif (x.operation == "sw"):
-                resultado = (station.vk, station.A)
+                imediato = int(station.A.split('+')[0])
+                A = imediato + station.Vj
+                resultado = (station.Vk, A)
 
             index = uf.index(x)
             x.resultado = resultado
@@ -142,36 +146,37 @@ def executarOperacao(uf, rs, MemoriaDados):
             
     return uf
     
-def Escrita(ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, PC, memoriaDados):
+def Escrita(ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, PC, memoriaDados, instrucaoDesvio):
     ## só pode uma escrita por vez, vamos priorizar a uf de soma por poder conter desvios
     escreveu = False
     
-    escreveu, rsAddSub, ufAddSub, listRegister, PC, memoriaDados , ocorreuDesvio = escreverResultado(ufAddSub, rsAddSub, listRegister, 'ADD', PC, memoriaDados)
+    escreveu, rsAddSub, ufAddSub, listRegister, PC, memoriaDados , ocorreuDesvio, rsAddSub, rsMulDiv, rsLoadStore, instrucaoDesvio = escreverResultado(ufAddSub, rsAddSub, rsAddSub, rsMulDiv, rsLoadStore, listRegister, PC, memoriaDados, instrucaoDesvio)
     if(escreveu):
         if(ocorreuDesvio):
             rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore = Helpers.limpaEstruturas(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore)
 
-        return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados, PC, ocorreuDesvio)
+        return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados, PC, ocorreuDesvio, instrucaoDesvio)
 
-    escreveu, rsMulDiv, ufMulDiv, listRegister, PC, memoriaDados , ocorreuDesvio = escreverResultado(ufMulDiv, rsMulDiv, listRegister, 'MUL', PC, memoriaDados)
+    escreveu, rsMulDiv, ufMulDiv, listRegister, PC, memoriaDados , ocorreuDesvio, rsAddSub, rsMulDiv, rsLoadStore, instrucaoDesvio = escreverResultado(ufMulDiv, rsMulDiv, rsAddSub, rsMulDiv, rsLoadStore,listRegister, PC, memoriaDados, instrucaoDesvio)
     
     if(escreveu):
-        return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados, PC , ocorreuDesvio)
+        return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados, PC , ocorreuDesvio, instrucaoDesvio)
 
-    escreveu, rsLoadStore, ufLoadStore, listRegister, PC, memoriaDados, ocorreuDesvio = escreverResultado(ufLoadStore, rsLoadStore, listRegister, 'LOAD', PC, memoriaDados)
+    escreveu, rsLoadStore, ufLoadStore, listRegister, PC, memoriaDados, ocorreuDesvio, rsAddSub, rsMulDiv, rsLoadStore, instrucaoDesvio = escreverResultado(ufLoadStore, rsLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, PC, memoriaDados, instrucaoDesvio)
     
-    return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados, PC , ocorreuDesvio)
+    return (ufAddSub, ufMulDiv, ufLoadStore, rsAddSub, rsMulDiv, rsLoadStore, listRegister, memoriaDados, PC , ocorreuDesvio, instrucaoDesvio)
 
 
-def escreverResultado(uf, rs, listRegister, rsName, PC, memoriaDados):
+def escreverResultado(uf, rs, rsAddSub, rsMulDiv, rsLoadStore, listRegister, PC, memoriaDados, instrucaoDesvio):
     teveEscrita = False
     ocorreuDesvio = False
     
     for x in uf:
-        if(x.nCiclos == 0 and not teveEscrita and not ocorreuDesvio):
+        if(x.nCiclo == 0 and not teveEscrita and not ocorreuDesvio):
             teveEscrita = True
 
             if(x.operation == 'blt' or x.operation == 'bgt' or x.operation == 'beq' or x.operation == 'bne' or x.operation == 'j'):
+                instrucaoDesvio = False
                 if(x.resultado != -1):
                     PC = x.resultado
                     ocorreuDesvio = True
@@ -181,43 +186,51 @@ def escreverResultado(uf, rs, listRegister, rsName, PC, memoriaDados):
                 memoriaDados[A] = resultado
 
             else: # no caso do load é a mesma coisa das outras operações
-                if x.idRs == listRegister[x.idDestino].Qi:
+                if x.idRS == listRegister[x.idDestino].Qi:
                     #escrita do resultado
                     listRegister[x.idDestino].value = x.resultado
 
                     #tira a referencia do resultado na lista de registradores
                     listRegister[x.idDestino].Qi = -1
+                    listRegister[x.idDestino].rs_name = ''
 
                 #retirar as dependencias de dados
-                for r in rs:
-                    rIndex = rs.index(r)
-
-                    if(rIndex != x.idRs):
-                        idQj, rsQj = r.Qj.split('-')
-
-                        if(int(idQj) == x.idRs and rsQj == rsName):
-                            r.Vj = x.resultado
-                            r.Qj = ''
-
-                        idQk, rsQk = r.Qk.split('-')
-
-                        if(int(idQk) == x.idRs and rsQk == rsName):
-                            r.Vk = x.resultado
-                            r.Qk = ''
-                            
-                        # atualizar estado da estação para pronto caso não tenha mais dependencia
-                        if(r.Qj == '' and r.Qk == ''):
-                            r.pronto = True
-
-                        rs[rIndex] = r
-
+                retiraDependencia(rsAddSub, rs[x.idRS].nome[:-1], x)
+                retiraDependencia(rsMulDiv, rs[x.idRS].nome[:-1], x)
+                retiraDependencia(rsLoadStore, rs[x.idRS].nome[:-1], x)
             # limpeza da estação de reserva e unidade
             index = uf.index(x)
-            rs = limpaEstacao(rs, x.idRs)
-            uf[index] = FunctionalUnitClass("", 0, -1, -1, False, -1)
+            rs = limpaEstacao(rs, x.idRS)
+            uf[index] = FunctionalUnitClass("", -1, -1, -1, False, -1)
 
-    return teveEscrita, rs, uf, listRegister, PC, memoriaDados, ocorreuDesvio
-    
+    return teveEscrita, rs, uf, listRegister, PC, memoriaDados, ocorreuDesvio, rsAddSub, rsMulDiv, rsLoadStore, instrucaoDesvio
+
+def retiraDependencia(rs, rsName, x):
+    for r in rs:
+        rIndex = rs.index(r)
+
+        if(rIndex != x.idRS or rsName != rs[x.idRS].nome):
+            if(r.Qj != ''):
+                idQj, rsQj = r.Qj.split('-')
+
+                if(int(idQj) == x.idRS and rsQj == rsName):
+                    r.Vj = x.resultado
+                    r.Qj = ''
+
+            
+            if(r.Qk != ''):
+                idQk, rsQk = r.Qk.split('-')
+
+                if(int(idQk) == x.idRS and rsQk == rsName):
+                    r.Vk = x.resultado
+                    r.Qk = ''
+
+            # atualizar estado da estação para pronto caso não tenha mais dependencia
+            if(r.Qj == '' and r.Qk == '' and r.busy):
+                r.pronto = True
+
+            rs[rIndex] = r
+
 ## como funcionam os valores das operações booleanas
 ## utilização do PC na main... // tem um buffer de instrucoes pra colocar as ins ai vc trabalha com o pc nisso (pc referene a ordem do despacho?)
 ## a instrução sai da unidade funcional somente quando é escrita? //sim

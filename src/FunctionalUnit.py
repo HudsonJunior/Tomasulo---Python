@@ -11,11 +11,11 @@ class FunctionalUnitClass:
 def DecrementaCiclosUF (uf):
 
     for x in uf:
-        if(x.nCiclos > 0):
-            x.nCiclos -= 1
+        if(x.nCiclo > 0):
+            x.nCiclo -= 1
 
-            if(x.nCiclos == 0):
-                x.execCompleta = True
+            if(x.nCiclo == 0):
+                x.execPronta = True
         index = uf.index(x)
         uf[index] = x
 
@@ -35,20 +35,25 @@ def checkUF(uf):
 
 def AdicionarEmUF(rsName, rs, ufAddSub, ufMulDiv, ufLoadStore, loadStoreQueue):
     for x in rs:
-        if(x.pronto):
+        if(x.pronto and not x.executando):
             # funcao "checkUf" valida se tem espaço na unidade funcional
             if(rsName == 'ADD'):
                 temEspaco, posicao = checkUF(ufAddSub)
 
                 # adicionar a instrução na UF de ADD
                 if(temEspaco):
+                    x.executando = True
+
                     ufAddSub[posicao].operation = x.op
                     ufAddSub[posicao].nCiclo = 5
                     ufAddSub[posicao].idRS = rs.index(x)
+                    ufAddSub[posicao].idDestino = x.idDestino
 
             elif(rsName == 'MUL'):
                 temEspaco, posicao = checkUF(ufMulDiv)
                 if(temEspaco):
+                    x.executando = True
+
                     ufMulDiv[posicao].operation = x.op
 
                     #operacoes de mul e div tem numero de ciclos diferentes
@@ -58,17 +63,21 @@ def AdicionarEmUF(rsName, rs, ufAddSub, ufMulDiv, ufLoadStore, loadStoreQueue):
                         ufMulDiv[posicao].nCiclo = 10
 
                     ufMulDiv[posicao].idRS = rs.index(x)
+                    ufMulDiv[posicao].idDestino = x.idDestino
             
             elif(rsName == 'LOAD'):
                 index = rs.index(x)
                 
                 #se for o primeiro da fila de loadStore e ela estiver pronta, adicionar na unidade funcional
                 if(loadStoreQueue[0].idRs == index):
-                    loadStoreQueue.remove(0)
+                    loadStoreQueue.pop(0)
                     temEspaco, posicao = checkUF(ufLoadStore)
                     if(temEspaco):
+                        x.executando = True
+
                         ufLoadStore[posicao].operation = x.op
                         ufLoadStore[posicao].nCiclo = 5
                         ufLoadStore[posicao].idRS = rs.index(x)
+                        ufLoadStore[posicao].idDestino = x.idDestino
 
     return ufAddSub, ufLoadStore, ufMulDiv, loadStoreQueue

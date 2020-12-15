@@ -18,7 +18,7 @@ def checkRS(rs):
 
     for station in rs:
         if(not station.busy):
-            count = rs.index(station) #comentar depois waillam
+            count = rs.index(station)
             return True, count
         
         count += 1
@@ -30,7 +30,6 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
     station.op = opcode    
     instrucaoDesvio = False
     destino = -1
-    ## [add, r0, r5, r10]
 
     if len(instruction) == 4:
         operando1 = int(instruction[2].replace('r', ''))
@@ -105,9 +104,6 @@ def fillStation(station, instruction, opcode, listRegisters, rsName, posicao):
             listRegisters[destino].rs_name = rsName
 
         else: # Load ou Store
-
-            # [lw, r15, imm(r5)]
-            # [sw, r12, imm(r10)]
 
             operando1 = int(instruction[1].replace('r', '')) #rd ou rs
             M = instruction[2].split('(') #[imm, rs)]

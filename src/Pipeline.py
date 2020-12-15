@@ -230,20 +230,3 @@ def retiraDependencia(rs, rsName, x):
                 r.pronto = True
 
             rs[rIndex] = r
-
-## como funcionam os valores das operações booleanas
-## utilização do PC na main... // tem um buffer de instrucoes pra colocar as ins ai vc trabalha com o pc nisso (pc referene a ordem do despacho?)
-## a instrução sai da unidade funcional somente quando é escrita? //sim
-## os operandoas das funções de desvio estão bugados, como passar eles nas RS? // passar o valor do imediato no A
-## como fazer as operações lógicas
-
-
-## como atualizar o valor de R5 + 10 que estará no A na RS?
-
-
-## validar instrução que entrou antes do desvio mas o desvio foi escrito antes, essa instrução vai ser apagada?
-## finalizar lógica de escrita para as diferentes tipo de instrução
-
-
-## rever a parte de sw e lw para a execucao e buffer de load e store
-## colocar os endereços efetivos onde?

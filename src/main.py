@@ -33,8 +33,6 @@ def main():
     tamanhoListaInstrucoes = len(listInstrucoes) - 1
     tamanhoMemoriaInstrucoes = len(memoriaInstrucoes) - 1
 
-    ## ADD R10, R5, R0
-    ## SUB R20, R56, R30
     imprimirEstruturas(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLoadStore, listRegisters, memoriaDados, clock, memoriaInstrucoes)
 
     clock = clock + 1
@@ -140,10 +138,6 @@ def imprimirEstruturas(rsAddSub, rsMulDiv, rsLoadStore, ufAddSub, ufMulDiv, ufLo
     print('LOAD')
     printUf(ufLoadStore)
     print('\n')
-
-
-def printMemoriaIns(memoriaInstrucoes):
-    print(memoriaInstrucoes)
 
 def printUf(uf):
     t = PrettyTable(['Operação', 'nCiclo', 'idRs', 'execPronta', 'resultado', 'idDestino'])

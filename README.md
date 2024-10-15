@@ -1,12 +1,11 @@
-# Tomasulo---Python
-Simulação do algoritmo de tomasulo implementado em Python.
 
-# Compilação
-Para compilar e executar a versão em Python, foi utilizada a versão 3, basta baixar a ́ultima versão constada no site python.org e instalar através do setup de instalacão. Para  executar  foi  utilizado  o  prompt  de comando  nativo do  Windows,  através  do  seguinte  código:  
-```bash
-python3 main.py 
-```
-Dentro  da  pasta  “src” do algoritmo. Após executar, será necessário informar o nome do arquivo de instruções através do input do terminal. Seguindo o exemplo, temos:
-```bash
-instrucoes.txt
-```
+# Tomasulo Algorithm Simulation
+
+This project simulates the **Tomasulo algorithm** using **Python**, demonstrating how instruction-level parallelism is managed in computer processors. The simulation provides insights into dynamic scheduling, instruction execution, and conflict resolution.
+
+## Features
+
+- **Simulation**: Models the Tomasulo algorithm, simulating instruction-level parallelism.
+- **Input Processing**: Accepts a text file with instructions for processing.
+
+This project provides a practical application of computer architecture concepts, particularly in pipeline execution and out-of-order processing.
